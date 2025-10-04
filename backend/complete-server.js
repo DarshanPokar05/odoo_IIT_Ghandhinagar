@@ -4,10 +4,16 @@ const url = require('url');
 // In-memory database
 const db = {
   companies: [{ id: 1, name: 'Demo Company', base_currency: 'USD' }],
-  users: [{
-    id: 1, company_id: 1, email: 'admin@demo.com', password: 'admin123',
-    first_name: 'Admin', last_name: 'User', role: 'admin', is_active: true
-  }],
+  users: [
+    {
+      id: 1, company_id: 1, email: 'admin@demo.com', password: 'admin123',
+      first_name: 'Admin', last_name: 'User', role: 'admin', is_active: true
+    },
+    {
+      id: 2, company_id: 1, email: 'manager@demo.com', password: 'manager123',
+      first_name: 'Manager', last_name: 'Demo', role: 'manager', is_active: true
+    }
+  ],
   expenses: [],
   categories: [
     { id: 1, company_id: 1, name: 'Food', description: 'Meals and dining' },
@@ -15,7 +21,7 @@ const db = {
     { id: 3, company_id: 1, name: 'Office', description: 'Office supplies' }
   ],
   approvals: [],
-  nextId: 2
+  nextId: 3
 };
 
 const server = http.createServer((req, res) => {
@@ -207,8 +213,8 @@ const server = http.createServer((req, res) => {
         }));
       }
       
-      else if (pathname === '/api/users/managers/list' && user && user.role === 'admin') {
-        const managers = db.users.filter(u => u.role === 'manager' || u.role === 'admin');
+      else if (pathname === '/api/users/managers/list' && user) {
+        const managers = db.users.filter(u => (u.role === 'manager' || u.role === 'admin') && u.is_active !== false);
         res.writeHead(200);
         res.end(JSON.stringify(managers.map(u => ({
           id: u.id,
