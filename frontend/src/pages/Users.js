@@ -34,7 +34,12 @@ const Users = () => {
 
   const { data: managers } = useQuery(
     'managers',
-    userService.getManagers
+    userService.getManagers,
+    {
+      onError: (error) => {
+        console.error('Failed to fetch managers:', error);
+      }
+    }
   );
 
   const createMutation = useMutation(userService.createUser, {
@@ -286,9 +291,9 @@ const Users = () => {
 
       {/* User Modal */}
       {showModal && (
-        <div className="modal-overlay animate-fade-in">
-          <div className="modal-content animate-bounce-in max-w-lg">
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 -m-6 mb-6 px-6 py-4 rounded-t-xl">
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-bounce-in">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 rounded-t-2xl">
               <h3 className="text-xl font-semibold text-white">
                 {editingUser ? 'Edit User' : 'Add New User'}
               </h3>
@@ -297,7 +302,7 @@ const Users = () => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -331,7 +336,7 @@ const Users = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email *
                   </label>
                   <input
@@ -343,17 +348,18 @@ const Users = () => {
                       }
                     })}
                     type="email"
-                    className="input-field"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    placeholder="Enter email address"
                     disabled={editingUser}
                   />
                   {errors.email && (
-                    <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                    <p className="mt-1 text-sm text-red-600 animate-fade-in">{errors.email.message}</p>
                   )}
                 </div>
 
                 {!editingUser && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Password *
                     </label>
                     <input
@@ -362,38 +368,39 @@ const Users = () => {
                         minLength: { value: 6, message: 'Password must be at least 6 characters' }
                       })}
                       type="password"
-                      className="input-field"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      placeholder="Enter password"
                     />
                     {errors.password && (
-                      <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                      <p className="mt-1 text-sm text-red-600 animate-fade-in">{errors.password.message}</p>
                     )}
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Role *
                   </label>
                   <select
                     {...register('role', { required: 'Role is required' })}
-                    className="input-field"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
                   >
                     <option value="">Select role</option>
                     <option value="employee">Employee</option>
                     <option value="manager">Manager</option>
                   </select>
                   {errors.role && (
-                    <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+                    <p className="mt-1 text-sm text-red-600 animate-fade-in">{errors.role.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Manager
                   </label>
                   <select
                     {...register('managerId')}
-                    className="input-field"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
                   >
                     <option value="">No manager</option>
                     {managers?.map((manager) => (
